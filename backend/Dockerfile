@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -6,8 +6,7 @@ RUN pip install gunicorn==23.0.0
 
 COPY requirements.txt .
 
-RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip setuptools wheel
-RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 

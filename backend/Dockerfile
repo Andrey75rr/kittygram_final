@@ -6,7 +6,7 @@ RUN pip install gunicorn==23.0.0
 
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 COPY . .
 

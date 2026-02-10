@@ -25,4 +25,4 @@ services:
     volumes:
       - static_volume:/staticfiles/
     ports:
-      - 8000:80
+      - 9000:80

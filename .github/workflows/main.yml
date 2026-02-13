@@ -139,7 +139,7 @@ jobs:
           overwrite: true
       
       - name: Executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master  # ← Это другой action!
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}

@@ -126,8 +126,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      
       - name: Copy docker-compose.yml via ssh
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
@@ -135,15 +136,17 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
           target: "/home/yc-user/kittygram/"
+          overwrite: true
+      
       - name: Executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@master  # ← Это другой action!
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd kittygram
+            cd /home/yc-user/kittygram
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d

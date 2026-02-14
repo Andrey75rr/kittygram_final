@@ -143,9 +143,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd /home/yc-user/kittygram
-            curl -f -o docker-compose.production.yml \
-                 -L https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.production.yml
+            cd kittygram
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d

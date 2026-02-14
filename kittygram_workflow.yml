@@ -1,6 +1,6 @@
-name: Main Kittygram workflow
+name: Main Kittygram workflow 
 
-on:
+on: 
   push:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools
         pip install flake8==6.0.0 flake8-isort==6.1.0
-        pip install -r ./backend/requirements.txt 
+        pip install -r ./backend/requirements.txt
     - name: Test with flake8 and django tests
       env:
         POSTGRES_USER: django_user
@@ -37,7 +37,7 @@ jobs:
       run: |
         python -m flake8 backend/
         cd backend/
-        python manage.py test 
+        python manage.py test
   build_and_push_to_docker_hub:
     name: Push Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
           tags: andrey75r/kittygram_backend:latest
   frontend_tests:
     runs-on: ubuntu-latest
-    steps:
+    steps: 
     - uses: actions/checkout@v3
     - name: Set up nodeJS
       uses: actions/setup-node@v3
@@ -85,7 +85,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to Docker 
+      - name: Login to Docker
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -95,7 +95,7 @@ jobs:
         with:
           context: ./frontend/
           push: true
-          tags: andrey75r/kittygram_frontend:latest 
+          tags: andrey75r/kittygram_frontend:latest
   build_gateway_and_push_to_docker_hub:
     name: Push gateway Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -105,7 +105,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to Docker 
+      - name: Login to Docker
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -118,11 +118,11 @@ jobs:
           tags: andrey75r/kittygram_gateway:latest
   deploy:
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - build_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
       - build_gateway_and_push_to_docker_hub
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -143,21 +143,23 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd kittygram
+            cd /home/yc-user/kittygram
+            curl -f -o docker-compose.production.yml \
+                 -L https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.production.yml
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-            sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+            sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic 
             sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
-  send_message:
-    runs-on: ubuntu-latest
+  send_message: 
+    runs-on: ubuntu-latest 
     needs: deploy
     if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Деплой успешно выполнен!
+    steps: 
+    - name: Send message 
+      uses: appleboy/telegram-action@master 
+      with: 
+        to: ${{ secrets.TELEGRAM_TO }} 
+        token: ${{ secrets.TELEGRAM_TOKEN }} 
+        message: Деплой успешно выполнен! 

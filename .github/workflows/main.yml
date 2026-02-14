@@ -126,7 +126,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      
       - name: Copy docker-compose.yml via ssh
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -137,7 +136,7 @@ jobs:
           source: "docker-compose.production.yml"
           target: "/home/yc-user/kittygram/"
           overwrite: true
-      
+          strip_components: 0
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
